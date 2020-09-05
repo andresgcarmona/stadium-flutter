@@ -7,6 +7,24 @@ class LoginForm extends StatefulWidget {
 
 class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  
+  @override
+  void initState() {
+    super.initState();
+    
+    _emailController.addListener(() { 
+      Scaffold.of(context)
+          .showSnackBar(SnackBar(content: Text("Email value ${_emailController.text}"),));
+    });
+  }
+  
+  @override
+  void dispose() {
+    _emailController.dispose();
+    
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +35,8 @@ class _LoginFormState extends State<LoginForm> {
           child: Column(
             children: <Widget>[
               TextFormField(
-                decoration: InputDecoration(hintText: 'email@example.com', labelText: 'Email'),
+                decoration: InputDecoration(
+                    hintText: 'email@example.com', labelText: 'Email'),
                 validator: (value) {
                   if (value.isEmpty) {
                     return 'Please enter some text';
@@ -25,9 +44,11 @@ class _LoginFormState extends State<LoginForm> {
 
                   return null;
                 },
+                controller: _emailController,
               ),
               TextFormField(
-                decoration: InputDecoration(hintText: 'Password', labelText: 'Password'),
+                decoration: InputDecoration(
+                    hintText: 'Password', labelText: 'Password'),
                 obscureText: true,
                 validator: (value) {
                   if (value.isEmpty) {
@@ -36,12 +57,15 @@ class _LoginFormState extends State<LoginForm> {
 
                   return null;
                 },
+                onChanged: (value) {
+                  print("Password value $value");
+                },
               ),
               RaisedButton(
                 onPressed: () {
                   if (_formKey.currentState.validate()) {
                     Scaffold.of(context).showSnackBar(
-                        SnackBar(content: Text('Processing data')));
+                        SnackBar(content: Text(_emailController.text)));
                   }
                 },
                 child: Text('Submit'),
