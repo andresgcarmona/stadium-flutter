@@ -38,7 +38,6 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           )
-        : Scaffold(
-            body: StadiumLoginForm());
+        : Scaffold(resizeToAvoidBottomPadding: false, body: StadiumLoginForm());
   }
 }
