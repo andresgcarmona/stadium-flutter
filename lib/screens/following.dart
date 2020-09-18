@@ -31,11 +31,11 @@ class _FollowingPageState extends State<FollowingPage> {
 
     return Scaffold(
         body: Container(
-          color: Colors.white,
+          color: Colors.black,
           child: CustomScrollView(
             slivers: [
               SliverAppBar(
-                brightness: Brightness.light,
+                brightness: Brightness.dark,
                 leading: IconButton(
                   icon: Icon(
                     Icons.arrow_back_ios,
@@ -44,7 +44,7 @@ class _FollowingPageState extends State<FollowingPage> {
                     Navigator.pop(context);
                 },
                 ),
-                backgroundColor: Colors.white,
+                backgroundColor: Colors.black54,
                 expandedHeight: 200,
                 flexibleSpace: FlexibleSpaceBar(
                   background: Container(
@@ -63,6 +63,7 @@ class _FollowingPageState extends State<FollowingPage> {
                         Text(
                           user.login,
                           style: TextStyle(
+                            color: Colors.white,
                               fontSize: 20.0, fontWeight: FontWeight.bold),
                         )
                       ],
@@ -80,7 +81,7 @@ class _FollowingPageState extends State<FollowingPage> {
                         return Container(
                           padding: EdgeInsets.all(15),
                           decoration: BoxDecoration(
-                            border: Border(bottom: BorderSide(color: Colors.grey[200]))
+                            border: Border(bottom: BorderSide(color: Colors.grey[900]))
                           ),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -97,7 +98,7 @@ class _FollowingPageState extends State<FollowingPage> {
                                     ),
                                   ),
                                   SizedBox(width: 10,),
-                                  Text(users[index].login, style: TextStyle(fontSize: 20.0, color: Colors.grey[700]),)
+                                  Text(users[index].login, style: TextStyle(fontSize: 20.0, color: Colors.grey[500]),)
                                 ],
                               ),
                               Text('Following', style: TextStyle(color: Colors.blue),)

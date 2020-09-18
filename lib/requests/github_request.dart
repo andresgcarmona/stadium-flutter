@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:http/http.dart' as http;
 
@@ -18,8 +19,12 @@ class Github {
 
   Github(this.username);
 
-  Future<http.Response> fetchUser() async =>
-      http.get((url + 'users/' + username + query));
+  Future<http.Response> fetchUser() async {
+    log(url + 'users/' + username + query);
+
+    return http.get(url + 'users/' + username + query);
+  }
+
 
   Future<http.Response> fetchFollowing() async =>
       http.get(url + 'users/' + username + '/following' + query);
