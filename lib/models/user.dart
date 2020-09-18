@@ -1,18 +1,18 @@
 class User {
-  final String login;
+  final String username;
   final String avatarURL;
-  final String htmlURL;
+  final String email;
 
-  User(this.login, this.avatarURL, this.htmlURL);
+  User(this.username, this.avatarURL, this.email);
 
   Map toJson() => {
-        'login': login,
-        'avatar_url': avatarURL,
-        'html_url': htmlURL,
+        'username': username,
+        'avatar': avatarURL,
+        'email': email,
       };
 
   User.fromJson(Map json)
-      : login = json['login'],
-        avatarURL = json['avatar_url'],
-        htmlURL = json['html_url'];
+      : username = json['user']['username'],
+        avatarURL = json['user']['avatar'],
+        email = json['user']['email'];
 }

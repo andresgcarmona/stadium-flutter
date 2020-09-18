@@ -2,31 +2,23 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:stadium/models/github_user.dart';
-import 'package:stadium/providers/github_user_provider.dart';
+import 'package:stadium/models/user.dart';
+import 'package:stadium/providers/user_provider.dart';
 import 'package:stadium/requests/github_request.dart';
 
-class FollowingPage extends StatefulWidget {
+class ProfilePage extends StatefulWidget {
   @override
-  _FollowingPageState createState() => _FollowingPageState();
+  _ProfilePageState createState() => _ProfilePageState();
 }
 
-class _FollowingPageState extends State<FollowingPage> {
-  GithubUser user;
-  List<GithubUser> users = [];
+class _ProfilePageState extends State<ProfilePage> {
+  User user;
+  List<User> users = [];
 
   @override
   Widget build(BuildContext context) {
     setState(() {
-      user = Provider.of<GithubUserProvider>(context).getUser();
-
-      Github(user.login).fetchFollowing().then((following) {
-        Iterable list = json.decode(following.body);
-
-        setState(() {
-          users = list.map((model) => GithubUser.fromJson(model)).toList();
-        });
-      });
+        user = Provider.of<UserProvider>(context).getUser();
     });
 
     return Scaffold(
@@ -61,7 +53,7 @@ class _FollowingPageState extends State<FollowingPage> {
                           ),
                         ),
                         Text(
-                          user.login,
+                          user.username,
                           style: TextStyle(
                             color: Colors.white,
                               fontSize: 20.0, fontWeight: FontWeight.bold),
@@ -98,7 +90,7 @@ class _FollowingPageState extends State<FollowingPage> {
                                     ),
                                   ),
                                   SizedBox(width: 10,),
-                                  Text(users[index].login, style: TextStyle(fontSize: 20.0, color: Colors.grey[500]),)
+                                  Text(users[index].username, style: TextStyle(fontSize: 20.0, color: Colors.grey[500]),)
                                 ],
                               ),
                               Text('Following', style: TextStyle(color: Colors.blue),)

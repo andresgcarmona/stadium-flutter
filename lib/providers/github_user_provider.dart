@@ -2,33 +2,28 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
-import 'package:stadium/models/user.dart';
-import 'package:stadium/requests/stadium_request.dart';
+import 'package:stadium/models/github_user.dart';
+import 'package:stadium/requests/github_request.dart';
 
-class UserProvider extends ChangeNotifier {
-  User user;
+class GithubUserProvider extends ChangeNotifier {
+  GithubUser user;
   String errorMessage;
-  String token;
   bool loading = false;
 
-  Future<bool> authenticateUser(String username, String password) async {
+  Future<bool> fetchUser(username) async {
     setLoading(true);
 
-    await Stadium(username, password).authenticateUser().then((data) {
+    await Github(username).fetchUser().then((data) {
       log(json.decode(data.body).toString());
 
       setLoading(false);
 
       if (data.statusCode == 200) {
-        var response = json.decode(data.body);
-
-        setUser(User.fromJson(response));
-
-        setToken(response['token']);
+        setUser(User.fromJson(json.decode(data.body)));
       } else {
         Map<String, dynamic> response = json.decode(data.body);
 
-        setMessage('User ' + response['error']);
+        setMessage('User ' + response['message']);
       }
     });
 
@@ -57,15 +52,9 @@ class UserProvider extends ChangeNotifier {
     return user != null;
   }
 
-  String getMessage() => errorMessage;
+  String getMessage() => this.errorMessage;
 
-  User getUser() => user;
+  GithubUser getUser() => this.user;
 
-  bool isLoading() => loading;
-
-  void setToken(String token) {
-    this.token = token;
-  }
-
-  String getToken() => token;
+  bool isLoading() => this.loading;
 }
