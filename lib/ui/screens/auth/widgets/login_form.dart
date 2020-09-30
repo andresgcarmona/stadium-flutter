@@ -1,34 +1,52 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:stadium/providers/user_provider.dart';
-import 'package:stadium/screens/profile.dart';
+import 'package:stadium/core/enums/viewstate.dart';
+import 'package:stadium/ui/screens/auth/login_model.dart';
 
-class StadiumLoginForm extends StatefulWidget {
+class LoginForm extends StatefulWidget {
+  final LoginModel model;
+
   @override
-  _StadiumLoginFormState createState() => _StadiumLoginFormState();
+  _LoginFormState createState() => _LoginFormState();
+
+  LoginForm({this.model});
 }
 
-class _StadiumLoginFormState extends State<StadiumLoginForm> {
-  TextEditingController _usernameController = TextEditingController();
+class _LoginFormState extends State<LoginForm> {
+  TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
 
-  void _authenticateUser() {
-    if (_usernameController.text == '') {
-      Provider.of<UserProvider>(context)
-          .setMessage('Please enter your username');
-    } else {
-      Provider.of<UserProvider>(context)
-          .authenticateUser(_usernameController.text, _passwordController.text)
-          .then((value) {
-        if (value) {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ProfilePage(),
-              ));
-        }
-      });
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+
+    super.dispose();
+  }
+
+  Future<bool> _authenticateUser() async {
+    if (_emailController.text == '') {
+      widget.model.setEmailError();
+
+      return Future<bool>.value(false);
     }
+
+    if (_passwordController.text == '') {
+      widget.model.setPasswordError();
+
+      return Future<bool>.value(false);
+    }
+
+    await widget.model
+        .login(_emailController.text, _passwordController.text)
+        .then((value) async {
+      if (value) {
+        var returnedValue = await Navigator.pushNamed(context, 'profile');
+
+        return Future<bool>.value(returnedValue != null);
+      }
+    });
+
+    return Future<bool>.value(true);
   }
 
   @override
@@ -65,16 +83,15 @@ class _StadiumLoginFormState extends State<StadiumLoginForm> {
                     color: Colors.white.withOpacity(.1)),
                 child: TextField(
                   onChanged: (value) {
-                    Provider.of<UserProvider>(context).setMessage(null);
+                    widget.model.setEmailError(error: null);
                   },
-                  controller: _usernameController,
-                  enabled: !Provider.of<UserProvider>(context).isLoading(),
+                  controller: _emailController,
+                  enabled: widget.model.state == ViewState.Idle,
                   style: TextStyle(color: Colors.white),
                   decoration: InputDecoration(
-                      errorText:
-                          Provider.of<UserProvider>(context).getMessage(),
+                      errorText: widget.model.emailError,
                       border: InputBorder.none,
-                      hintText: 'Username',
+                      hintText: 'Email',
                       hintStyle: TextStyle(color: Colors.grey)),
                 ),
               ),
@@ -97,7 +114,12 @@ class _StadiumLoginFormState extends State<StadiumLoginForm> {
                   controller: _passwordController,
                   style: TextStyle(color: Colors.white),
                   obscureText: true,
+                  enabled: widget.model.state == ViewState.Idle,
+                  onChanged: (value) {
+                    widget.model.setPasswordError(error: null);
+                  },
                   decoration: InputDecoration(
+                      errorText: widget.model.passwordError,
                       border: InputBorder.none,
                       hintText: 'Password',
                       hintStyle: TextStyle(color: Colors.grey)),
@@ -114,7 +136,7 @@ class _StadiumLoginFormState extends State<StadiumLoginForm> {
                   _authenticateUser();
                 },
                 child: Align(
-                  child: Provider.of<UserProvider>(context).isLoading()
+                  child: widget.model.state == ViewState.Busy
                       ? CircularProgressIndicator(
                           backgroundColor: Colors.white,
                           strokeWidth: 2.0,
